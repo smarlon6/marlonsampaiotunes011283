@@ -1,5 +1,5 @@
 ﻿import { http } from "../../../lib/http";
-import type { PageResponse, Pet } from "../types/pet.types";
+import type { PageResponse, Pet, PetDetail } from "../types/pet.types";
 
 export type ListPetsParams = {
   page?: number;
@@ -22,7 +22,7 @@ export const petsFacade = {
   },
 
   async getById(id: number) {
-    const res = await http.get<Pet>(`/v1/pets/${id}`);
+    const res = await http.get<PetDetail>(`/v1/pets/${id}`);
     return res.data;
   },
 };

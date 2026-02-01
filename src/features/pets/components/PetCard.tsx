@@ -1,10 +1,14 @@
-﻿import type { Pet } from "../types/pet.types";
+﻿import { Link } from "react-router-dom";
+import type { Pet } from "../types/pet.types";
 
 type Props = { pet: Pet };
 
 export function PetCard({ pet }: Props) {
   return (
-    <div className="rounded-2xl border bg-white overflow-hidden shadow-sm hover:shadow transition">
+    <Link
+      to={`/pets/${pet.id}`}
+      className="block rounded-2xl border bg-white overflow-hidden shadow-sm hover:shadow transition"
+    >
       <div className="h-36 bg-slate-50 flex items-center justify-center overflow-hidden">
         {pet.foto?.url ? (
           <img src={pet.foto.url} alt={pet.nome} className="h-full w-full object-cover" loading="lazy" />
@@ -22,6 +26,6 @@ export function PetCard({ pet }: Props) {
           <span className="px-2 py-1 rounded-full bg-slate-100">{pet.idade} ano(s)</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
