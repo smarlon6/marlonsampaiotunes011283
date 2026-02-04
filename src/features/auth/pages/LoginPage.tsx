@@ -59,7 +59,7 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={a.loading}
-            className="w-full px-4 py-2 rounded-xl bg-teal-700 text-white hover:bg-teal-800 disabled:opacity-50"
+            className="w-full px-4 py-2 rounded-xl bg-[#093089] text-white hover:bg-[#093089] disabled:opacity-50"
           >
             {a.loading ? "Entrando..." : "Entrar"}
           </button>
