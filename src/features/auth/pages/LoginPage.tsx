@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authStore } from "../state/auth.store";
 import { useObservableState } from "../../../lib/useObservableState";
+import { PawPrint } from "lucide-react";
 
 export function LoginPage() {
   const nav = useNavigate();
@@ -11,7 +12,6 @@ export function LoginPage() {
   const [password, setPassword] = useState("admin");
 
   useEffect(() => {
-    // se já estiver logado, manda pra home
     if (a.status === "authenticated") nav("/pets");
   }, [a.status, nav]);
 
@@ -23,7 +23,11 @@ export function LoginPage() {
   return (
     <div className="min-h-screen bg-slate-50 grid place-items-center p-6">
       <div className="w-full max-w-md rounded-2xl border bg-white shadow-sm p-6">
-        <div className="mb-6">
+        <div className="mb-6 text-center">
+          {/* Logo com ícone */}
+          <div className="mx-auto w-16 h-16 bg-teal-600 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+            <PawPrint className="w-8 h-8 text-white" />
+          </div>
           <div className="text-xl font-bold text-slate-800">PET-MT</div>
           <div className="text-sm text-slate-500">Acesse com suas credenciais</div>
         </div>
@@ -59,13 +63,13 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={a.loading}
-            className="w-full px-4 py-2 rounded-xl bg-[#093089] text-white hover:bg-[#093089] disabled:opacity-50"
+            className="w-full px-4 py-2 rounded-xl bg-teal-600 text-white hover:bg-teal-700 disabled:opacity-50"
           >
             {a.loading ? "Entrando..." : "Entrar"}
           </button>
 
           <div className="text-xs text-slate-500">
-            Dica: para o ambiente do edital, use <b>admin/admin</b>.
+            Dica: use <b>admin/admin</b>.
           </div>
         </form>
       </div>
