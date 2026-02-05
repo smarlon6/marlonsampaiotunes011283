@@ -1,28 +1,18 @@
-import axios from "axios";
+import { http } from "../../../lib/http";
 import type { TokenPayload } from "../../../lib/tokenStorage";
-
-const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 export const authFacade = {
   async login(username: string, password: string) {
-    const res = await axios.post<TokenPayload>(
-      `${baseURL}/autenticacao/login`,
-      { username, password },
-      { timeout: 15000 }
-    );
+    const res = await http.post<TokenPayload>("/autenticacao/login", { username, password });
     return res.data;
   },
 
   async refresh(refreshToken: string) {
-    const res = await axios.put<TokenPayload>(
-      `${baseURL}/autenticacao/refresh`,
+    // A API pode aceitar refresh via Authorization Bearer (como você já fazia)
+    const res = await http.put<TokenPayload>(
+      "/autenticacao/refresh",
       null,
-      {
-        timeout: 15000,
-        headers: {
-          Authorization: `Bearer ${refreshToken}`, // refresh token aqui
-        },
-      }
+      { headers: { Authorization: `Bearer ${refreshToken}` } }
     );
     return res.data;
   },

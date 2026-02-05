@@ -4,7 +4,7 @@ import { authFacade } from "../features/auth/api/auth.facade";
 import { authStore } from "../features/auth/state/auth.store";
 
 export const http = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL ?? "",
   timeout: 15000,
 });
 
