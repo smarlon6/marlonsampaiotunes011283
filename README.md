@@ -6,6 +6,9 @@ Este projeto consiste em uma **Single Page Application (SPA)** desenvolvida em *
 API oficial (Swagger):  
 👉 https://pet-manager-api.geia.vip/q/swagger-ui/
 
+Link Vercel (aplicação rodando)
+https://marlonsampaiotunes011283.vercel.app/login
+
 ---
 
 ## 1. Dados da Inscrição
