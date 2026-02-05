@@ -78,7 +78,7 @@ Essa abordagem facilita:
 ## 5. Organização do Projeto
 
 Estrutura baseada em **features**, conforme boas práticas de projetos escaláveis:
-
+```bash
 ───src
     ├───app
     ├───assets
