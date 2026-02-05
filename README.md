@@ -78,30 +78,50 @@ Essa abordagem facilita:
 ## 5. Organização do Projeto
 
 Estrutura baseada em **features**, conforme boas práticas de projetos escaláveis:
-```bash
-───src
-    ├───app
-    ├───assets
-    ├───features
-    │   ├───auth
-    │   │   ├───api
-    │   │   ├───pages
-    │   │   └───state
-    │   ├───pets
-    │   │   ├───api
-    │   │   ├───components
-    │   │   ├───pages
-    │   │   ├───state
-    │   │   └───types
-    │   └───tutores
-    │       ├───api
-    │       ├───pages
-    │       └───state
-    ├───lib
-    ├───pages
-    ├───shared
-    │   └───components
-    └───tests
+
+src/
+├── app/
+│   ├── App.tsx
+│   └── routes.tsx
+│
+├── assets/
+│   └── imagens, ícones e arquivos estáticos
+│
+├── features/
+│   ├── auth/
+│   │   ├── api/        # Comunicação com endpoints de autenticação
+│   │   ├── pages/      # Telas de login e autenticação
+│   │   └── state/      # Gerenciamento de estado (BehaviorSubject)
+│   │
+│   ├── pets/
+│   │   ├── api/        # Facade de acesso à API de pets
+│   │   ├── components/# Componentes reutilizáveis (cards, formulários)
+│   │   ├── pages/      # Listagem, detalhamento e edição de pets
+│   │   ├── state/      # Estado global de pets (BehaviorSubject)
+│   │   └── types/      # Tipagens TypeScript
+│   │
+│   └── tutores/
+│       ├── api/        # Facade de acesso à API de tutores
+│       ├── pages/      # Cadastro, edição e vínculo pet-tutor
+│       └── state/      # Gerenciamento de estado dos tutores
+│
+├── lib/
+│   ├── http.ts         # Cliente HTTP (Axios + interceptors)
+│   ├── tokenStorage.ts# Persistência e controle de tokens
+│   └── helpers utilitários
+│
+├── pages/
+│   └── Páginas globais (fallbacks, erros, etc.)
+│
+├── shared/
+│   └── components/
+│       ├── Sidebar.tsx
+│       ├── Topbar.tsx
+│       └── Componentes compartilhados da UI
+│
+└── tests/
+    └── Testes unitários básicos (ex: componentes e páginas)
+    
 
 ## 6. Atendimento aos Requisitos do Edital
 
