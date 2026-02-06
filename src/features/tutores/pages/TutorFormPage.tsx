@@ -3,12 +3,24 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useObservableState } from "../../../lib/useObservableState";
 import { tutorFormStore } from "../state/tutorForm.store";
 import { tutoresFacade } from "../api/tutores.facade";
+import {
+  ArrowLeft,
+  Save,
+  RotateCcw,
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  CreditCard,
+  ImagePlus,
+  UserCircle,
+  X,
+} from "lucide-react";
 
 function onlyDigits(v: string) {
   return v.replace(/\D/g, "");
 }
 
-// máscara simples CPF: 000.000.000-00
 function maskCpf(v: string) {
   const d = onlyDigits(v).slice(0, 11);
   const p1 = d.slice(0, 3);
@@ -18,7 +30,6 @@ function maskCpf(v: string) {
   return [p1, p2, p3].filter(Boolean).join(".") + (p4 ? `-${p4}` : "");
 }
 
-// máscara simples telefone (BR): (99) 99999-9999 / (99) 9999-9999
 function maskPhone(v: string) {
   const d = onlyDigits(v).slice(0, 11);
   const ddd = d.slice(0, 2);
@@ -39,15 +50,26 @@ export function TutorFormPage() {
   const s = useObservableState(tutorFormStore.state$, tutorFormStore.snapshot);
 
   const [fotoFile, setFotoFile] = useState<File | null>(null);
+  const [fotoPreview, setFotoPreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (isEdit) tutorFormStore.loadForEdit(tutorId);
     else tutorFormStore.resetCreate();
   }, [isEdit, tutorId]);
 
+  // Gera preview local da foto selecionada
+  useEffect(() => {
+    if (!fotoFile) {
+      setFotoPreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(fotoFile);
+    setFotoPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [fotoFile]);
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     const saved = await tutorFormStore.save();
     if (!saved) return;
 
@@ -62,131 +84,212 @@ export function TutorFormPage() {
     navigate(`/tutores/${saved.id}`);
   }
 
+  const inputClass =
+    "mt-1.5 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-teal-600/30 focus:border-teal-400 transition-colors";
+
   return (
-    <div className="p-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+    <div className="px-4 py-8 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4 flex-wrap mb-8">
         <div>
-          <div className="text-sm text-slate-500">{isEdit ? "Edição de Tutor" : "Novo Tutor"}</div>
-          <div className="text-2xl font-bold text-slate-800 mt-1">
+          <p className="text-sm text-teal-600 font-medium mb-1">
+            {isEdit ? "Edição de Tutor" : "Novo Tutor"}
+          </p>
+          <h1 className="text-3xl font-bold text-gray-900">
             {isEdit ? `Editar: ${s.nome || "—"}` : "Cadastrar Tutor"}
-          </div>
+          </h1>
         </div>
 
-        <div className="flex gap-2">
-          <Link
-            className="px-4 py-2 rounded-xl border bg-white hover:bg-slate-50"
-            to={isEdit ? `/tutores/${tutorId}` : "/tutores"}
-          >
-            ← Voltar
-          </Link>
-        </div>
+        <Link
+          to={isEdit ? `/tutores/${tutorId}` : "/tutores"}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar
+        </Link>
       </div>
 
+      {/* Feedback */}
       {s.error && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{s.error}</div>
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 mb-6">
+          {s.error}
+        </div>
       )}
-
       {s.success && (
-        <div className="mt-4 rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-700">{s.success}</div>
+        <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700 mb-6">
+          {s.success}
+        </div>
       )}
 
       {s.loading ? (
-        <div className="mt-4 text-sm text-slate-500">Carregando...</div>
+        <div className="text-sm text-gray-500 animate-pulse">Carregando...</div>
       ) : (
-        <form onSubmit={onSubmit} className="mt-6 grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2 rounded-2xl border bg-white p-5 shadow-sm">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="sm:col-span-2">
-                <label className="text-sm text-slate-600">Nome completo *</label>
-                <input
-                  value={s.nome}
-                  onChange={(e) => tutorFormStore.setField("nome", e.target.value)}
-                  className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-teal-600/30"
-                  placeholder="Ex.: João da Silva"
-                />
+        <form onSubmit={onSubmit}>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {/* Formulário principal */}
+            <div className="lg:col-span-2 rounded-xl border bg-white p-6 shadow-sm">
+              <div className="space-y-5">
+                {/* Nome */}
+                <div>
+                  <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                    <User className="h-4 w-4 text-gray-400" />
+                    Nome completo <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    value={s.nome}
+                    onChange={(e) => tutorFormStore.setField("nome", e.target.value)}
+                    className={inputClass}
+                    placeholder="Ex.: João da Silva"
+                  />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                    <Mail className="h-4 w-4 text-gray-400" />
+                    Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="email"
+                    value={s.email}
+                    onChange={(e) => tutorFormStore.setField("email", e.target.value)}
+                    className={inputClass}
+                    placeholder="ex.: joao@email.com"
+                    inputMode="email"
+                  />
+                </div>
+
+                {/* Telefone + CPF */}
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                      <Phone className="h-4 w-4 text-gray-400" />
+                      Telefone <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      required
+                      value={s.telefone}
+                      onChange={(e) => tutorFormStore.setField("telefone", maskPhone(e.target.value))}
+                      className={inputClass}
+                      placeholder="(11) 91234-5678"
+                      inputMode="tel"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                      <CreditCard className="h-4 w-4 text-gray-400" />
+                      CPF <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      required
+                      value={s.cpf}
+                      onChange={(e) => tutorFormStore.setField("cpf", maskCpf(e.target.value))}
+                      className={inputClass}
+                      placeholder="000.000.000-00"
+                      inputMode="numeric"
+                    />
+                  </div>
+                </div>
+
+                {/* Endereço */}
+                <div>
+                  <label className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+                    <MapPin className="h-4 w-4 text-gray-400" />
+                    Endereço <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    value={s.endereco}
+                    onChange={(e) => tutorFormStore.setField("endereco", e.target.value)}
+                    className={inputClass}
+                    placeholder="Rua, número, bairro, cidade"
+                  />
+                </div>
               </div>
 
-              <div className="sm:col-span-2">
-                <label className="text-sm text-slate-600">Email *</label>
-                <input
-                  value={s.email}
-                  onChange={(e) => tutorFormStore.setField("email", e.target.value)}
-                  className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-teal-600/30"
-                  placeholder="ex.: joao@email.com"
-                  inputMode="email"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm text-slate-600">Telefone *</label>
-                <input
-                  value={s.telefone}
-                  onChange={(e) => tutorFormStore.setField("telefone", maskPhone(e.target.value))}
-                  className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-teal-600/30"
-                  placeholder="(11) 91234-5678"
-                  inputMode="tel"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm text-slate-600">CPF *</label>
-                <input
-                  value={s.cpf}
-                  onChange={(e) => tutorFormStore.setField("cpf", maskCpf(e.target.value))}
-                  className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-teal-600/30"
-                  placeholder="000.000.000-00"
-                  inputMode="numeric"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="text-sm text-slate-600">Endereço *</label>
-                <input
-                  value={s.endereco}
-                  onChange={(e) => tutorFormStore.setField("endereco", e.target.value)}
-                  className="mt-1 w-full rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-teal-600/30"
-                  placeholder="Rua, número, bairro, cidade"
-                />
-              </div>
-            </div>
-
-            <div className="mt-6 flex gap-2">
-              <button
-                type="submit"
-                disabled={s.saving}
-                className="px-4 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50"
-              >
-                {s.saving ? "Salvando..." : isEdit ? "Salvar alterações" : "Cadastrar"}
-              </button>
-
-              {!isEdit && (
+              {/* Ações */}
+              <div className="mt-8 flex items-center gap-3">
                 <button
-                  type="button"
-                  onClick={() => tutorFormStore.resetCreate()}
-                  className="px-4 py-2 rounded-xl border bg-white hover:bg-slate-50"
+                  type="submit"
+                  disabled={s.saving}
+                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-teal-600 text-white font-medium hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Limpar
+                  <Save className="h-4 w-4" />
+                  {s.saving ? "Salvando..." : isEdit ? "Salvar alterações" : "Cadastrar"}
                 </button>
-              )}
-            </div>
-          </div>
 
-          <div className="lg:col-span-1 rounded-2xl border bg-white p-5 shadow-sm">
-            <div className="text-lg font-bold text-slate-800">Foto do Tutor</div>
-            <div className="text-sm text-slate-500 mt-1">Selecione uma imagem para enviar após salvar.</div>
-
-            <input
-              type="file"
-              accept="image/*"
-              className="mt-4 block w-full text-sm"
-              onChange={(e) => setFotoFile(e.target.files?.[0] ?? null)}
-            />
-
-            {fotoFile && (
-              <div className="mt-3 text-sm text-slate-600">
-                Selecionado: <b>{fotoFile.name}</b>
+                {!isEdit && (
+                  <button
+                    type="button"
+                    onClick={() => tutorFormStore.resetCreate()}
+                    className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Limpar
+                  </button>
+                )}
               </div>
-            )}
+            </div>
+
+            {/* Coluna lateral — Foto */}
+            <div className="lg:col-span-1">
+              <div className="rounded-xl border bg-white p-6 shadow-sm sticky top-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <ImagePlus className="h-5 w-5 text-teal-600" />
+                  <h2 className="text-lg font-bold text-gray-800">Foto do Tutor</h2>
+                </div>
+
+                {/* Preview */}
+                <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden flex items-center justify-center mb-4">
+                  {fotoPreview ? (
+                    <img
+                      src={fotoPreview}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <div className="text-center">
+                      <UserCircle className="mx-auto h-16 w-16 text-gray-300" />
+                      <p className="text-sm text-gray-400 mt-2">Sem foto</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Upload */}
+                <label className="block cursor-pointer">
+                  <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 text-sm font-medium text-gray-600 hover:border-teal-400 hover:text-teal-600 transition-colors">
+                    <ImagePlus className="h-4 w-4" />
+                    Selecionar imagem
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => setFotoFile(e.target.files?.[0] ?? null)}
+                  />
+                </label>
+
+                {fotoFile && (
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-lg bg-teal-50 border border-teal-200 px-3 py-2">
+                    <span className="text-xs text-teal-700 truncate">{fotoFile.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFotoFile(null)}
+                      className="shrink-0 text-teal-500 hover:text-teal-700 transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
+                <p className="text-xs text-gray-400 mt-3 text-center">
+                  A foto será enviada ao salvar o formulário.
+                </p>
+              </div>
+            </div>
           </div>
         </form>
       )}

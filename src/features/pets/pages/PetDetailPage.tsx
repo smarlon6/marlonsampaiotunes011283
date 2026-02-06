@@ -2,6 +2,18 @@ import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useObservableState } from "../../../lib/useObservableState";
 import { petDetailStore } from "../state/petDetail.store";
+import {
+  ArrowLeft,
+  Pencil,
+  PawPrint,
+  Tag,
+  Calendar,
+  Hash,
+  Users,
+  Mail,
+  Phone,
+  UserCircle,
+} from "lucide-react";
 
 export function PetDetailPage() {
   const { id } = useParams();
@@ -18,11 +30,15 @@ export function PetDetailPage() {
 
   if (!Number.isFinite(petId) || petId <= 0) {
     return (
-      <div className="p-6">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-700 text-sm">
+      <div className="px-4 py-8 max-w-7xl mx-auto">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 text-sm">
           ID inválido.
         </div>
-        <Link className="inline-block mt-4 text-sm text-teal-700 underline" to="/">
+        <Link
+          className="inline-flex items-center gap-2 mt-4 text-sm text-teal-600 hover:text-teal-700 font-medium"
+          to="/"
+        >
+          <ArrowLeft className="h-4 w-4" />
           Voltar
         </Link>
       </div>
@@ -30,90 +46,152 @@ export function PetDetailPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
+    <div className="px-4 py-8 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-4 flex-wrap mb-8">
         <div>
-          <div className="text-sm text-slate-500">Detalhamento do Pet</div>
-
-          {/* Destaque no nome */}
-          <div className="text-3xl font-extrabold text-slate-900 mt-1">
-            {s.pet?.nome ?? "—"}
-          </div>
-
-          <div className="text-sm text-slate-600 mt-2">
-            <span className="font-semibold">Raça:</span> {s.pet?.raca ?? "—"}{" "}
-            <span className="mx-2">•</span>
-            <span className="font-semibold">Idade:</span> {s.pet?.idade ?? "—"} ano(s)
+          <p className="text-sm text-teal-600 font-medium mb-1">Detalhamento do Pet</p>
+          <h1 className="text-3xl font-bold text-gray-900">{s.pet?.nome ?? "—"}</h1>
+          <div className="flex items-center gap-3 mt-2 text-sm text-gray-500">
+            <span className="inline-flex items-center gap-1">
+              <Tag className="h-3.5 w-3.5" />
+              {s.pet?.raca ?? "—"}
+            </span>
+            <span className="text-gray-300">•</span>
+            <span className="inline-flex items-center gap-1">
+              <Calendar className="h-3.5 w-3.5" />
+              {s.pet?.idade ?? "—"} ano(s)
+            </span>
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <Link className="px-4 py-2 rounded-xl border bg-white hover:bg-slate-50" to="/">
-            ← Voltar
+        <div className="flex items-center gap-2">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Voltar
           </Link>
-            <Link
-            className="px-4 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600"
+          <Link
             to={`/pets/${s.pet?.id}/editar`}
-            >
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-teal-600 text-white font-medium hover:bg-teal-700 transition-colors"
+          >
+            <Pencil className="h-4 w-4" />
             Editar
-            </Link>
+          </Link>
         </div>
       </div>
 
+      {/* Feedback */}
       {s.error && (
-        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 text-red-700 p-3 text-sm">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 mb-6">
           {s.error}
         </div>
       )}
 
-      {s.loading && <div className="mt-4 text-sm text-slate-500">Carregando...</div>}
+      {s.loading && (
+        <div className="text-sm text-gray-500 animate-pulse mb-6">Carregando...</div>
+      )}
 
       {s.pet && (
-        <div className="mt-6 grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-1 rounded-2xl border bg-white overflow-hidden shadow-sm">
-            <div className="h-64 bg-slate-50 flex items-center justify-center overflow-hidden">
-              {s.pet.foto?.url ? (
-                <img
-                  src={s.pet.foto.url}
-                  alt={s.pet.nome}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="text-slate-400 text-sm">Sem foto</div>
-              )}
-            </div>
-            <div className="p-4 text-sm text-slate-600">
-              <div className="font-semibold text-slate-800">ID #{s.pet.id}</div>
-              <div className="mt-2">
-                Use o botão <b>Editar</b> para alterar dados do pet (Etapa 3).
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Coluna lateral — Foto + Info rápida */}
+          <div className="lg:col-span-1">
+            <div className="rounded-xl border bg-white overflow-hidden shadow-sm sticky top-8">
+              <div className="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
+                {s.pet.foto?.url ? (
+                  <img
+                    src={s.pet.foto.url}
+                    alt={s.pet.nome}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="text-center">
+                    <PawPrint className="mx-auto h-16 w-16 text-gray-300" />
+                    <p className="text-sm text-gray-400 mt-2">Sem foto</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-5 space-y-3">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Hash className="h-4 w-4 text-gray-400" />
+                  <span>
+                    ID: <span className="font-semibold text-gray-800">#{s.pet.id}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Tag className="h-4 w-4 text-gray-400" />
+                  <span>
+                    Raça: <span className="font-semibold text-gray-800">{s.pet.raca}</span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <Calendar className="h-4 w-4 text-gray-400" />
+                  <span>
+                    Idade: <span className="font-semibold text-gray-800">{s.pet.idade} ano(s)</span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="lg:col-span-2 space-y-4">
-            <div className="rounded-2xl border bg-white p-5 shadow-sm">
-              <div className="text-lg font-bold text-slate-800">Tutores</div>
-
+          {/* Coluna principal — Tutores */}
+          <div className="lg:col-span-2">
+            <div className="rounded-xl border bg-white p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-5">
+                <Users className="h-5 w-5 text-teal-600" />
+                <h2 className="text-lg font-bold text-gray-800">Tutores Vinculados</h2>
+              </div>
 
               {s.tutoresDetalhados.length === 0 ? (
-                <div className="mt-4 text-sm text-slate-500">Nenhum tutor vinculado.</div>
+                <div className="py-8 text-center">
+                  <Users className="mx-auto mb-3 h-12 w-12 text-gray-300" />
+                  <p className="text-gray-500 text-sm">Nenhum tutor vinculado a este pet.</p>
+                </div>
               ) : (
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   {s.tutoresDetalhados.map((t) => (
-                    <div key={t.id} className="rounded-xl border bg-slate-50 p-4">
-                      <div className="font-semibold text-slate-800">{t.nome}</div>
-                      <div className="text-sm text-slate-600 mt-1">
-                        {t.email && <div>📧 {t.email}</div>}
-                        {t.telefone && <div>📞 {t.telefone}</div>}
+                    <div
+                      key={t.id}
+                      className="rounded-lg border bg-gray-50 p-4 hover:shadow-sm transition-shadow"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="h-10 w-10 shrink-0 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                          {(t as any).foto?.url ? (
+                            <img
+                              src={(t as any).foto.url}
+                              alt={t.nome}
+                              className="h-full w-full object-cover"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <UserCircle className="h-6 w-6 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-gray-800 truncate">{t.nome}</div>
+                          {t.email && (
+                            <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-1 truncate">
+                              <Mail className="h-3.5 w-3.5 shrink-0" />
+                              {t.email}
+                            </div>
+                          )}
+                          {t.telefone && (
+                            <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-0.5 truncate">
+                              <Phone className="h-3.5 w-3.5 shrink-0" />
+                              {t.telefone}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
             </div>
-
-
           </div>
         </div>
       )}

@@ -26,7 +26,7 @@ export function PetCard({ pet, onDelete, isDeleting }: Props) {
   return (
     <div className="rounded-xl border bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <Link to={`/pets/${pet.id}`} className="block">
-        <div className="aspect-[4/3] bg-slate-100 overflow-hidden">
+        <div className="aspect-square w-full bg-slate-100 overflow-hidden">
           {pet.foto?.url ? (
             <img
               src={pet.foto.url}
@@ -44,14 +44,8 @@ export function PetCard({ pet, onDelete, isDeleting }: Props) {
         <div className="p-4">
           <div className="font-semibold text-slate-800 truncate">{pet.nome}</div>
           <div className="text-sm text-slate-500 truncate">{pet.raca || "—"}</div>
-
-          <div className="mt-3 flex items-center justify-between">
-            <span className="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700 border border-green-200">
-              Pet
-            </span>
-            <span className="text-sm text-slate-500">
-              {pet.idade} ano{pet.idade !== 1 ? "s" : ""}
-            </span>
+          <div className="text-sm text-slate-500">
+            {pet.idade} ano{pet.idade !== 1 ? "s" : ""}
           </div>
         </div>
       </Link>

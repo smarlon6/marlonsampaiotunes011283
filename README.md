@@ -108,7 +108,7 @@ src/
 ├── lib/
 │   ├── http.ts         # Cliente HTTP (Axios + interceptors)
 │   ├── tokenStorage.ts# Persistência e controle de tokens
-│   └── helpers utilitários
+│   └── helpers        # Funções utilitárias
 │
 ├── pages/
 │   └── Páginas globais (fallbacks, erros, etc.)
@@ -121,7 +121,8 @@ src/
 │
 └── tests/
     └── Testes unitários básicos (ex: componentes e páginas)
-    
+
+
 
 ## 6. Atendimento aos Requisitos do Edital
 
